@@ -3,6 +3,16 @@ const { JSDOM, VirtualConsole } = require('jsdom');
 // 用 127.0.0.1 而非 localhost：环境里配置了 HTTP 代理，会劫持 localhost 请求
 const BASE = 'http://127.0.0.1:' + (process.env.PORT || 3000);
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+// CI 机器比本地慢，固定 sleep 容易偶发失败，这里统一改成轮询等待
+async function waitFor(fn, timeout = 10000, step = 150) {
+  const t0 = Date.now();
+  for (;;) {
+    const v = fn();
+    if (v) return v;
+    if (Date.now() - t0 > timeout) return null;
+    await wait(step);
+  }
+}
 
 function mockCtx() {
   const store = {};
@@ -85,9 +95,9 @@ function assert(cond, msg) { if (!cond) throw new Error('断言失败：' + msg)
   input.value = '不要香菜';
   input.dispatchEvent(new win.Event('input', { bubbles: true }));
   click(doc, '[data-act="submitOrder"]');
-  await wait(1200);
+  await waitFor(() => doc.querySelector('.order-card') || doc.querySelector('.tl-item'));
   assert(count(doc, '.order-card') >= 1 || doc.querySelector('.tl-item'), '下单成功，进入订单跟踪页');
-  assert(doc.querySelector('#trackCanvas'), '订单跟踪页地图 canvas 已渲染');
+  assert(await waitFor(() => doc.querySelector('#trackCanvas')), '订单跟踪页地图 canvas 已渲染');
   assert(count(doc, '.tl-item') >= 1, '配送时间轴 ' + count(doc, '.tl-item') + ' 条');
 
   // 聊天页
@@ -139,13 +149,13 @@ function assert(cond, msg) { if (!cond) throw new Error('断言失败：' + msg)
   console.log('\n== 骑手端 /rider.html ==');
   ({ dom, doc, win, errors } = await open('/rider.html', 'rider'));
   assert(doc.querySelector('.rider-top'), '骑手端顶部收入卡渲染');
-  await wait(1200);
+  await waitFor(() => doc.querySelector('.task-card'));
   const tasks = count(doc, '.task-card');
   console.log('   当前任务卡片：' + tasks + ' 个');
   assert(tasks >= 1, '骑手端收到派单任务');
   const openBtn = doc.querySelector('[data-act="openTask"]');
   openBtn.dispatchEvent(new win.MouseEvent('click', { bubbles: true }));
-  await wait(600);
+  await waitFor(() => doc.querySelector('#taskCanvas'));
   assert(doc.querySelector('#taskCanvas'), '任务导航地图 canvas 已渲染');
   assert(doc.querySelector('.nav-panel'), '导航面板存在，剩余：' + (doc.querySelector('#tkDist') || {}).textContent);
   // 骑手聊天页
