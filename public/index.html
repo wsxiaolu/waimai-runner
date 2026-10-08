@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>外卖跑腿 · 三端演示</title>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body class="role-user">
+  <div class="stage">
+    <div class="phone" id="phone">
+      <div class="status-bar"><span class="sb-time">10:24</span>
+        <span class="sb-right"><span style="font-size:11px">5G</span><span style="font-size:12px">📶</span><span class="battery"><i></i></span></span>
+      </div>
+      <div class="screen">
+        <div class="page" style="position:relative">
+          <div class="page-scroll">
+            <div class="entry">
+              <div class="logo">
+                <div class="em">🛵</div>
+                <div class="t">外卖跑腿 · 全链路演示</div>
+                <div class="s">用户端 / 骑手端 / 商家端 + 实时导航 + 即时聊天</div>
+              </div>
+
+              <a class="item" href="/user.html">
+                <div class="ic" style="background:#fff8e1">🍜</div>
+                <div class="grow">
+                  <div class="tt">用户端（美团风格）</div>
+                  <div class="ss">选店 · 点餐 · 下单 · 实时跟踪骑手 · 聊天</div>
+                </div>
+                <span class="go">›</span>
+              </a>
+
+              <a class="item" href="/rider.html">
+                <div class="ic" style="background:#e8f3ff">🛵</div>
+                <div class="grow">
+                  <div class="tt">骑手端（跑腿）</div>
+                  <div class="ss">抢单 · 导航取餐 · 送达 · 联系用户/商家</div>
+                </div>
+                <span class="go">›</span>
+              </a>
+
+              <a class="item" href="/merchant.html">
+                <div class="ic" style="background:#fff0ea">🏪</div>
+                <div class="grow">
+                  <div class="tt">商家端（外卖管家）</div>
+                  <div class="ss">接单 · 备餐 · 出餐 · 订单管理 · 客服</div>
+                </div>
+                <span class="go">›</span>
+              </a>
+
+              <div class="tip">
+                建议同时打开三个页面（浏览器多标签/分屏）<br>
+                在用户端下单 → 商家端接单出餐 → 骑手端取餐送达<br>
+                全部状态与地图位置通过 WebSocket 实时同步
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/js/core.js"></script>
+  <script>U.startClock();</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "waimai-runner",
+  "version": "1.0.0",
+  "private": true,
+  "description": "外卖跑腿全链路 Demo：用户端 / 骑手端 / 商家端 + 实时地图导航 + 即时聊天",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js",
+    "test": "node test/smoke.js",
+    "test:auth": "node test/auth.js",
+    "test:dom": "node test/dom.js"
+  },
+  "dependencies": {
+    "express": "^4.22.3",
+    "pg": "^8.23.1",
+    "ws": "^8.22.0"
+  },
+  "devDependencies": {
+    "jsdom": "^30.1.2"
+  }
+}

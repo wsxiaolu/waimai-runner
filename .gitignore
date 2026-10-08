@@ -1,0 +1,10 @@
+node_modules/
+server/data.json
+test/dom.out
+dist/
+build/
+# Xcode 工程由 CI 上的 xcodegen 生成，不入库（避免 pbxproj 冲突）
+ios/Waimai.xcodeproj/
+ios/*.xcarchive/
+.DS_Store
+*.log

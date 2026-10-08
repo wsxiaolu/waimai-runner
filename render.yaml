@@ -1,0 +1,21 @@
+# Render Blueprint：免费 Web Service（无需信用卡，支持 WebSocket 长连接）
+# 部署：Render Dashboard → New → Blueprint → 选本仓库
+services:
+  - type: web
+    name: waimai-api
+    runtime: node
+    plan: free
+    region: singapore
+    branch: main
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/bootstrap
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # 免费实例休眠会清空磁盘，所以账号/订单存到 Supabase 免费 Postgres
+      # 在 Render Dashboard 里把 Supabase 的连接串填进 DATABASE_URL（sync: false = 手动填）
+      - key: DATABASE_URL
+        sync: false
+      - key: DB_TABLE
+        value: waimai_state
