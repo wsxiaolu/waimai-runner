@@ -99,8 +99,11 @@ function assert(cond, msg) { if (!cond) throw new Error('断言失败：' + msg)
   assert(count(doc, '.order-card') >= 1 || doc.querySelector('.tl-item'), '下单成功，进入订单跟踪页');
   const tc = await waitFor(() => doc.querySelector('#trackCanvas'));
   if (!tc) {
-    const p = doc.querySelector('.page');
-    console.log('   诊断 当前页 class=' + (p ? p.className : '(无 .page)'));
+    // 栈顶是 DOM 里的最后一个 .page，不能用 querySelector（它返回第一个）
+    const all = doc.querySelectorAll('.page');
+    const p = all[all.length - 1];
+    console.log('   诊断 页面栈=' + Array.prototype.map.call(all, (x) => x.dataset.page).join('>'));
+    console.log('   诊断 栈顶 class=' + (p ? p.className : '(无 .page)'));
     console.log('   诊断 order-card=' + count(doc, '.order-card') + ' tl-item=' + count(doc, '.tl-item'));
     console.log('   诊断 片段=' + (p ? p.innerHTML.slice(0, 500).replace(/\s+/g, ' ') : '-'));
     console.log('   诊断 JS 报错=' + JSON.stringify(errors.slice(0, 3)));

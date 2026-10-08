@@ -814,6 +814,11 @@
       remark: draft.remark, tableware: draft.tableware, payMethod: draft.pay
     }).then((r) => {
       if (r.error) { toast(r.error); return; }
+      // 乐观更新：WS 推送可能还没到，先把新订单并入本地状态，
+      // 否则紧接着跳转的跟踪页会因为查不到订单而渲染成「订单不存在」
+      if (r.order && !App.state.orders.some((o) => o.id === r.order.id)) {
+        App.state.orders = [r.order].concat(App.state.orders);
+      }
       cart = { shopId: null, items: {} };
       draft.remark = '';
       toast('下单成功，等待商家接单 🎉');
