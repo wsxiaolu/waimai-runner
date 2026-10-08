@@ -32,7 +32,12 @@ jobs:
 
       - name: 生成 Xcode 工程
         working-directory: ios
-        run: xcodegen generate --spec project.yml --project Waimai.xcodeproj
+        # 注意：--project 指的是「生成到哪个目录」，文件名由 spec 里的 name 决定，
+        # 传 --project Waimai.xcodeproj 会生成出 Waimai.xcodeproj/Waimai.xcodeproj
+        run: |
+          xcodegen generate --spec project.yml
+          ls -la
+          test -d Waimai.xcodeproj
 
       - name: 归档（不签名）
         working-directory: ios
