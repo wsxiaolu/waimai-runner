@@ -295,7 +295,16 @@ async function init() {
   if (DATABASE_URL) {
     try {
       const { Pool } = require('pg');
-      pgPool = new Pool({ connectionString: DATABASE_URL, ssl: { rejectUnauthorized: false } });
+      // Supabase / Neon 等托管库强制 SSL；本地自签的库可以用 DB_SSL=0 关掉
+      const useSSL = String(process.env.DB_SSL || '1') !== '0';
+      pgPool = new Pool({
+        connectionString: DATABASE_URL,
+        ssl: useSSL ? { rejectUnauthorized: false } : false,
+        max: 4,
+        connectionTimeoutMillis: 10000
+      });
+      // 不监听 error 的话，一次网络抖动会让 Node 进程直接崩掉
+      pgPool.on('error', (e) => console.warn('[store] Postgres 连接错误：' + e.message));
       await pgPool.query('CREATE TABLE IF NOT EXISTS ' + TABLE +
         ' (id text PRIMARY KEY, data jsonb NOT NULL, updated_at timestamptz DEFAULT now())');
       const r = await pgPool.query('SELECT data FROM ' + TABLE + ' WHERE id = $1', ['main']);

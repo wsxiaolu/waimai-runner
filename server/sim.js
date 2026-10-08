@@ -354,7 +354,11 @@ function createEngine(emit) {
 
   function tick() {
     const db = get();
+    // dirty   = 需要向前端推送 orders
+    // persist = 需要落库。骑手坐标每 500ms 变一次，若一起落库会把免费数据库写爆，
+    //           所以只有订单状态真正推进时才写库（坐标重启后回退一点无所谓）
     let dirty = false;
+    let persist = false;
 
     db.orders.forEach((order) => {
       if (['completed', 'cancelled'].includes(order.status)) return;
@@ -363,17 +367,17 @@ function createEngine(emit) {
 
       // 商家自动接单
       if (order.status === 'created' && db.merchant.autoAccept && t - order.createdAt > 4000) {
-        dirty = true;
+        dirty = true; persist = true;
         action(order.id, 'merchant_accept', 'merchant');
       }
       // 自动出餐
       if (order.status === 'accepted' && t - (order.acceptedAt || order.createdAt) > db.merchant.cookSeconds * 1000) {
-        dirty = true;
+        dirty = true; persist = true;
         action(order.id, 'merchant_cooked', 'merchant');
       }
       // 出餐后持续尝试派单
       if (order.status === 'cooked') {
-        if (assignRider(order)) dirty = true;
+        if (assignRider(order)) { dirty = true; persist = true; }
       }
 
       // 骑手移动
@@ -387,19 +391,19 @@ function createEngine(emit) {
           rider.traveled = order.traveled;
           order.riderPos = { x: pos.x, y: pos.y, heading: pos.heading };
         }
-        dirty = true;
+        dirty = true; // 只推送，不落库
 
         if (order.traveled >= (order.legTotal || 0)) {
           if (order.status === 'assigned') {
             order.status = 'picking';
             pushTimeline(order, 'picking', '骑手已到店，正在取餐');
             systemMessage(order, '骑手已到达商家，正在取餐 🏪');
-            dirty = true;
+            dirty = true; persist = true;
           } else if (order.status === 'delivering') {
             order.status = 'arrived';
             pushTimeline(order, 'arrived', '骑手已送达，请及时取餐');
             systemMessage(order, '骑手已到达您的位置，请及时取餐 🏠');
-            dirty = true;
+            dirty = true; persist = true;
           }
         }
       }
@@ -407,18 +411,18 @@ function createEngine(emit) {
       // 自动取餐
       if (order.status === 'picking' && rider && rider.autoMode) {
         const wait = t - ((order.timeline.find((x) => x.status === 'picking') || {}).time || t);
-        if (wait > 4000) { dirty = true; action(order.id, 'rider_pick', 'rider'); }
+        if (wait > 4000) { dirty = true; persist = true; action(order.id, 'rider_pick', 'rider'); }
       }
       // 自动送达
       if (order.status === 'arrived' && rider && rider.autoMode) {
         const wait = t - ((order.timeline.find((x) => x.status === 'arrived') || {}).time || t);
-        if (wait > 4000) { dirty = true; action(order.id, 'rider_deliver', 'rider'); }
+        if (wait > 4000) { dirty = true; persist = true; action(order.id, 'rider_deliver', 'rider'); }
       }
 
       order.eta = etaOf(order);
     });
 
-    if (dirty) save();
+    if (persist) save();
     return dirty;
   }
 
