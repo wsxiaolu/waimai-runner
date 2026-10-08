@@ -97,7 +97,15 @@ function assert(cond, msg) { if (!cond) throw new Error('断言失败：' + msg)
   click(doc, '[data-act="submitOrder"]');
   await waitFor(() => doc.querySelector('.order-card') || doc.querySelector('.tl-item'));
   assert(count(doc, '.order-card') >= 1 || doc.querySelector('.tl-item'), '下单成功，进入订单跟踪页');
-  assert(await waitFor(() => doc.querySelector('#trackCanvas')), '订单跟踪页地图 canvas 已渲染');
+  const tc = await waitFor(() => doc.querySelector('#trackCanvas'));
+  if (!tc) {
+    const p = doc.querySelector('.page');
+    console.log('   诊断 当前页 class=' + (p ? p.className : '(无 .page)'));
+    console.log('   诊断 order-card=' + count(doc, '.order-card') + ' tl-item=' + count(doc, '.tl-item'));
+    console.log('   诊断 片段=' + (p ? p.innerHTML.slice(0, 500).replace(/\s+/g, ' ') : '-'));
+    console.log('   诊断 JS 报错=' + JSON.stringify(errors.slice(0, 3)));
+  }
+  assert(tc, '订单跟踪页地图 canvas 已渲染');
   assert(count(doc, '.tl-item') >= 1, '配送时间轴 ' + count(doc, '.tl-item') + ' 条');
 
   // 聊天页
