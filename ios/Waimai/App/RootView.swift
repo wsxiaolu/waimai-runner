@@ -14,6 +14,12 @@ struct RoleSwitchToolbar: ToolbarContent {
                         Label("\(r.icon) \(r.title)", systemImage: r == state.role ? "checkmark" : "arrow.right.circle")
                     }
                 }
+                Divider()
+                Button(role: .destructive) {
+                    state.logout()
+                } label: {
+                    Label("退出登录", systemImage: "rectangle.portrait.and.arrow.right")
+                }
             } label: {
                 Image(systemName: "person.2.badge.gearshape")
             }
@@ -124,6 +130,8 @@ struct ProfileView: View {
                         .foregroundStyle(.orange)
                     Button("退出登录") { state.logout() }
                         .foregroundStyle(.red)
+                } footer: {
+                    Text("退出登录不会删除订单，重新登录同一个账号后订单照旧；切换身份同理，只换视角不换数据。")
                 }
             }
             .listStyle(.insetGrouped)

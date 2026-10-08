@@ -513,3 +513,34 @@ html, body {
   background: rgba(0, 0, 0, .78); color: #fff; padding: 10px 16px; border-radius: 8px;
   font-size: 13px; z-index: 999; max-width: 76%; text-align: center; animation: fadeIn .18s;
 }
+
+/* ---------- 悬浮「切换端」按钮 ---------- */
+.switch-fab {
+  position: absolute; right: 10px; bottom: 74px; z-index: 80;
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(20, 22, 26, .82); color: #fff;
+  border-radius: 18px; padding: 8px 13px; font-size: 12px; font-weight: 600;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .3); cursor: pointer;
+  backdrop-filter: blur(6px);
+}
+.switch-fab .sf-ico { font-size: 14px; }
+.switch-fab:active { transform: scale(.96); }
+
+.switch-menu {
+  position: absolute; right: 10px; bottom: 116px; z-index: 81;
+  width: 216px; background: #fff; border-radius: 14px;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, .24); overflow: hidden; display: none;
+}
+.switch-menu.show { display: block; animation: dropIn .18s; }
+.sm-item {
+  display: flex; align-items: center; gap: 10px; padding: 11px 12px;
+  text-decoration: none; color: inherit; border-bottom: 1px solid var(--line);
+}
+.sm-item:active { background: #fafafa; }
+.sm-item.on { background: var(--brand-soft); }
+.sm-e { font-size: 21px; }
+.sm-n { font-size: 13px; font-weight: 600; }
+.sm-d { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+.sm-c { color: var(--brand-deep); font-weight: 700; }
+.sm-go { color: var(--text-3); }
+.sm-tip { padding: 9px 12px; font-size: 11px; color: var(--text-3); background: #fafbfc; line-height: 1.5; }

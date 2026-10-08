@@ -32,4 +32,5 @@ jobs:
           done
           npm test
           npm run test:auth
+          npm run test:switch
           npm run test:dom

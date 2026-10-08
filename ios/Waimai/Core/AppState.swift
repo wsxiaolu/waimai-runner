@@ -87,13 +87,32 @@ final class AppState: ObservableObject {
         messages = [:]
     }
 
-    /// 切换商家 / 骑手 / 用户身份：必须先输入密码验证
+    /// 切换商家 / 骑手 / 用户身份：必须先输入密码验证。
+    /// 可反复切换；切换只换视角，不动业务数据 —— 订单、聊天、骑手位置全部原样保留。
     func switchRole(to: Role, password: String) async throws {
+        // 密码校验失败会直接 throw，不会改动 role
         let _: OKResp = try await API.shared.post("/api/auth/verify", body: ["password": password])
+
+        // 先留快照：切换期间绝不主动清空任何数据
+        let ordersSnapshot = orders
+        let messagesSnapshot = messages
+        let ridersSnapshot = riders
+        let cartSnapshot = cart
+        let cartShopSnapshot = cartShopId
+
         role = to
         UserDefaults.standard.set(to.rawValue, forKey: "waimai.role")
+
         await refresh()
+
+        // 只有拉取成功（非空）才覆盖；网络异常拉空时回滚到快照，保证订单不丢
+        if orders.isEmpty && !ordersSnapshot.isEmpty { orders = ordersSnapshot }
+        if messages.isEmpty && !messagesSnapshot.isEmpty { messages = messagesSnapshot }
+        if riders.isEmpty && !ridersSnapshot.isEmpty { riders = ridersSnapshot }
+        if cart.isEmpty { cart = cartSnapshot; cartShopId = cartShopSnapshot }
+
         connect()
+        say("已切换到\(to.title)")
     }
 
     /// 点击「切换身份」按钮：弹出密码验证

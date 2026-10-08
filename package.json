@@ -9,6 +9,7 @@
     "dev": "node server/index.js",
     "test": "node test/smoke.js",
     "test:auth": "node test/auth.js",
+    "test:switch": "node test/switch.js",
     "test:dom": "node test/dom.js"
   },
   "dependencies": {

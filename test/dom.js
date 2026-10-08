@@ -102,6 +102,14 @@ function assert(cond, msg) { if (!cond) throw new Error('断言失败：' + msg)
     await wait(800);
     assert(count(doc, '.bubble') >= 1, '消息气泡已渲染：' + count(doc, '.bubble') + ' 条');
   }
+  // 悬浮「切换端」按钮
+  assert(count(doc, '.switch-fab') === 1, '右下角「切换端」悬浮按钮已渲染');
+  click(doc, '.switch-fab');
+  await wait(200);
+  assert(!!doc.querySelector('.switch-menu.show'), '点击后弹出切换菜单');
+  assert(count(doc, '.sm-item') === 4, '菜单含 4 个入口：' + Array.from(doc.querySelectorAll('.sm-n')).map((e) => e.textContent).join('/'));
+  assert(!!doc.querySelector('.sm-item.on'), '菜单标出了当前所在端');
+
   assert(errors.length === 0, '用户端无 JS 报错' + (errors.length ? '：' + errors.join(' | ') : ''));
   dom.window.close();
 
