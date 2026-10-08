@@ -45,9 +45,9 @@ struct ChatView: View {
                             Text(item.1)
                                 .font(.caption.weight(.semibold))
                                 .padding(.horizontal, 14).padding(.vertical, 7)
-                                .background(target == k ? Color.orange : Color(.secondarySystemBackground),
+                                .background(target == item.0 ? Color.orange : Color(.secondarySystemBackground),
                                             in: Capsule())
-                                .foregroundStyle(target == k ? .white : .primary)
+                                .foregroundStyle(target == item.0 ? .white : .primary)
                         }
                         .buttonStyle(.plain)
                     }
@@ -67,7 +67,7 @@ struct ChatView: View {
                     .padding(14)
                 }
                 .background(Color(.systemGroupedBackground))
-                .onChange(of: list.count) { _ in
+                .onChange(of: list.count) {
                     if let last = list.last { withAnimation { proxy.scrollTo(last.id, anchor: .bottom) } }
                 }
             }

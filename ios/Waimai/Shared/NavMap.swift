@@ -59,7 +59,7 @@ struct NavMapView: View {
             .padding(10)
         }
         .onAppear { if !didFit { fit(); didFit = true } }
-        .onChange(of: route.count) { _ in fit() }
+        .onChange(of: route.count) { fit() }
     }
 
     private func fit() {

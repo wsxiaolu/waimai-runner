@@ -5,7 +5,7 @@ struct RoleSwitchToolbar: ToolbarContent {
     @EnvironmentObject var state: AppState
 
     var body: some ToolbarContent {
-        ToolbarItem(placement: .topTrailing) {
+        ToolbarItem(placement: .topBarTrailing) {
             Menu {
                 ForEach(AppState.Role.allCases) { r in
                     Button {

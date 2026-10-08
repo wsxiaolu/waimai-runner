@@ -64,7 +64,9 @@ struct BigButton: View {
             .frame(maxWidth: .infinity)
             .frame(height: 46)
             .background(disabled ? Color.gray.opacity(0.25) : color, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-            .foregroundStyle(disabled ? .secondary : .white)
+            // 三元表达式两边必须同类型：这里显式写 Color，
+            // 否则 Swift 会把 .secondary 推断成 HierarchicalShapeStyle 而报错
+            .foregroundStyle(disabled ? Color.secondary : Color.white)
         }
         .disabled(disabled)
     }
