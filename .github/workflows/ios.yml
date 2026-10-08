@@ -1,5 +1,9 @@
 name: 构建 iOS IPA
 
+# 默认 GITHUB_TOKEN 是只读的，打 tag 时要往 Release 传文件，必须显式放开写权限
+permissions:
+  contents: write
+
 on:
   push:
     branches: [main, master]
